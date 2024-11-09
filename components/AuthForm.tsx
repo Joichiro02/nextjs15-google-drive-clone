@@ -9,6 +9,7 @@ import { z } from "zod";
 
 import { createAccount } from "@/lib/actions/user.actions";
 
+import OTPModal from "./OTPModal";
 import { Button } from "./ui/button";
 import {
 	Form,
@@ -152,6 +153,10 @@ export default function AuthForm({ type }: { type: FormType }) {
 					</div>
 				</form>
 			</Form>
+
+			{accountId && (
+				<OTPModal email={form.getValues("email")} accountId={accountId} />
+			)}
 		</>
 	);
 }
