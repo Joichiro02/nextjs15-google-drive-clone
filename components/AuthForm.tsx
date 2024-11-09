@@ -7,6 +7,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { createAccount } from "@/lib/actions/user.actions";
+
 import { Button } from "./ui/button";
 import {
 	Form,
@@ -33,6 +35,7 @@ const authFormSchema = (formType: FormType) => {
 export default function AuthForm({ type }: { type: FormType }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
+	const [accountId, setAccountId] = useState(null);
 
 	const formSchema = authFormSchema(type);
 	// 1. Define the form
@@ -46,7 +49,21 @@ export default function AuthForm({ type }: { type: FormType }) {
 
 	// 2. Define the submit function
 	const onSubmit = async (data: z.infer<typeof formSchema>) => {
-		console.log(data);
+		setIsLoading(true);
+		setErrorMessage("");
+
+		try {
+			const user = await createAccount({
+				fullname: data.fullname || "",
+				email: data.email,
+			});
+
+			setAccountId(user.accountId);
+		} catch {
+			setErrorMessage("Failed to create an account. Please try again.");
+		} finally {
+			setIsLoading(false);
+		}
 	};
 	return (
 		<>
