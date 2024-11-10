@@ -14,7 +14,7 @@ import { Separator } from "./ui/separator";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./ui/sheet";
 
 interface Props {
-	ownerId: string;
+	$id: string;
 	accountId: string;
 	fullname: string;
 	avatar: string;
@@ -22,7 +22,7 @@ interface Props {
 }
 
 export default function MobileNavigation({
-	ownerId,
+	$id: ownerId,
 	accountId,
 	fullname,
 	avatar,
@@ -96,7 +96,7 @@ export default function MobileNavigation({
 					<Separator className="my-5 bg-light-200/20" />
 
 					<div className="flex flex-col justify-between gap-5 pb-5">
-						<FileUploader />
+						<FileUploader ownerId={ownerId} accountId={accountId} />
 						<Button
 							type="submit"
 							className="mobile-sign-out-button"
