@@ -3,7 +3,9 @@
 import { cookies } from "next/headers";
 import { ID, Query } from "node-appwrite";
 
-import { createAdminClient } from "../appwrite";
+import { avatarPlaceholderUrl } from "@/constants";
+
+import { createAdminClient, createSessionClient } from "../appwrite";
 import { appwriteConfig } from "../appwrite/config";
 import { parseStringify } from "../utils";
 
@@ -48,7 +50,7 @@ export const createAccount = async ({
 
 	if (!accountId) throw new Error("Failed to send an OTP");
 
-	if (existingUser) {
+	if (!existingUser) {
 		const { databases } = await createAdminClient();
 		await databases.createDocument(
 			appwriteConfig.databaseId,
@@ -57,8 +59,7 @@ export const createAccount = async ({
 			{
 				fullname,
 				email,
-				avatar:
-					"https://toppng.com/public/uploads/preview/cool-avatar-transparent-image-cool-boy-avatar-11562893383qsirclznyw.png",
+				avatar: avatarPlaceholderUrl,
 				accountId,
 			},
 		);
@@ -86,5 +87,24 @@ export const verifySecret = async ({
 		return parseStringify({ sessionId: session.$id });
 	} catch (error) {
 		handleError(error, "Failed to verify OTP");
+	}
+};
+
+export const getCurrentUser = async () => {
+	const { account, databases } = await createSessionClient();
+
+	try {
+		const result = await account.get();
+		const user = await databases.listDocuments(
+			appwriteConfig.databaseId,
+			appwriteConfig.userCollectionId,
+			[Query.equal("accountId", result.$id)],
+		);
+
+		if (user.total <= 0) return null;
+
+		return parseStringify(user.documents[0]);
+	} catch (error) {
+		handleError(error, "Failed to get current user");
 	}
 };
