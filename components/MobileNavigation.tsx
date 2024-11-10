@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 import { navItems } from "@/constants";
+import { signOutUser } from "@/lib/actions/user.actions";
 import { cn } from "@/lib/utils";
 
 import FileUploader from "./FileUploader";
@@ -99,7 +100,7 @@ export default function MobileNavigation({
 						<Button
 							type="submit"
 							className="mobile-sign-out-button"
-							onClick={() => {}}
+							onClick={async () => await signOutUser()} // this is implemented like this, because this component is cliet side, their a server side implementaion in signout in Header component
 						>
 							<Image
 								src="assets/icons/logout.svg"

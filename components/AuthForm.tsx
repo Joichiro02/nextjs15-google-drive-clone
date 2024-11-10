@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { createAccount } from "@/lib/actions/user.actions";
+import { createAccount, signInUser } from "@/lib/actions/user.actions";
 
 import OTPModal from "./OTPModal";
 import { Button } from "./ui/button";
@@ -54,10 +54,13 @@ export default function AuthForm({ type }: { type: FormType }) {
 		setErrorMessage("");
 
 		try {
-			const user = await createAccount({
-				fullname: data.fullname || "",
-				email: data.email,
-			});
+			const user =
+				type === "sign-up"
+					? await createAccount({
+							fullname: data.fullname || "",
+							email: data.email,
+						})
+					: await signInUser({ email: data.email });
 
 			setAccountId(user.accountId);
 		} catch {

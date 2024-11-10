@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import { signOutUser } from "@/lib/actions/user.actions";
+
 import FileUploader from "./FileUploader";
 import Search from "./Search";
 import { Button } from "./ui/button";
@@ -10,7 +12,12 @@ export default function Header() {
 			<Search />
 			<div className="header-wrapper">
 				<FileUploader />
-				<form action="">
+				<form
+					action={async () => {
+						"use server";
+						await signOutUser(); // this how to implement the signout in server side component
+					}}
+				>
 					<Button type="submit" className="sign-out-button">
 						<Image
 							src="assets/icons/logout.svg"
