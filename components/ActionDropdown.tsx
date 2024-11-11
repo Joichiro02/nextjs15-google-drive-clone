@@ -10,6 +10,7 @@ import { actionsDropdownItems } from "@/constants";
 import { renameFile } from "@/lib/actions/file.actions";
 import { constructDownloadUrl } from "@/lib/utils";
 
+import { FileDetails } from "./ActionsModalContent";
 import { Button } from "./ui/button";
 import {
 	Dialog,
@@ -87,6 +88,7 @@ export default function ActionDropdown({ file }: { file: Models.Document }) {
 						onChange={(e) => setName(e.target.value)}
 					/>
 				)}
+				{value === "details" && <FileDetails file={file} />}
 				{["rename", "delete", "share"].includes(value) && (
 					<DialogFooter className="flex flex-col gap-3 md:flex-row">
 						<Button onClick={closeAllModals} className="modal-cancel-button">
