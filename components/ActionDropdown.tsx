@@ -7,10 +7,10 @@ import { Models } from "node-appwrite";
 import { useState } from "react";
 
 import { actionsDropdownItems } from "@/constants";
-import { renameFile } from "@/lib/actions/file.actions";
+import { renameFile, updateFileUsers } from "@/lib/actions/file.actions";
 import { constructDownloadUrl } from "@/lib/utils";
 
-import { FileDetails } from "./ActionsModalContent";
+import { FileDetails, ShareInput } from "./ActionsModalContent";
 import { Button } from "./ui/button";
 import {
 	Dialog,
@@ -36,6 +36,7 @@ export default function ActionDropdown({ file }: { file: Models.Document }) {
 	const [action, setAction] = useState<ActionType | null>(null);
 	const [name, setName] = useState(file.name);
 	const [isLoading, setIsLoading] = useState(false);
+	const [emails, setEmails] = useState<string[]>([]);
 
 	const closeAllModals = () => {
 		setIsModalOpen(false);
@@ -58,7 +59,8 @@ export default function ActionDropdown({ file }: { file: Models.Document }) {
 					extension: file.extension,
 					path: pathname,
 				}),
-			share: () => console.log("share"),
+			share: () =>
+				updateFileUsers({ fileId: file.$id, emails, path: pathname }),
 			delete: () => console.log("delete"),
 		};
 
@@ -67,6 +69,19 @@ export default function ActionDropdown({ file }: { file: Models.Document }) {
 		if (success) closeAllModals();
 
 		setIsLoading(false);
+	};
+
+	const handleRemoveUser = async (email: string) => {
+		const updatedEmails = emails.filter((e) => e !== email);
+
+		const success = await updateFileUsers({
+			fileId: file.$id,
+			emails: updatedEmails,
+			path: pathname,
+		});
+
+		if (success) setEmails(updatedEmails);
+		closeAllModals();
 	};
 
 	const renderDialogContent = () => {
@@ -89,6 +104,13 @@ export default function ActionDropdown({ file }: { file: Models.Document }) {
 					/>
 				)}
 				{value === "details" && <FileDetails file={file} />}
+				{value === "share" && (
+					<ShareInput
+						file={file}
+						onInputChange={setEmails}
+						onRemove={handleRemoveUser}
+					/>
+				)}
 				{["rename", "delete", "share"].includes(value) && (
 					<DialogFooter className="flex flex-col gap-3 md:flex-row">
 						<Button onClick={closeAllModals} className="modal-cancel-button">
