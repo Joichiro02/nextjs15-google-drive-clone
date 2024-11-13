@@ -7,6 +7,8 @@ import Sidebar from "@/components/Sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import { getCurrentUser } from "@/lib/actions/user.actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function Layout({
 	children,
 }: {
