@@ -24,7 +24,7 @@ const getUserByEmail = async (email: string) => {
 
 const handleError = (error: unknown, message: string) => {
 	console.error(error, message);
-	throw error;
+	// throw error;
 };
 
 export const sendEmailOTP = async (email: string) => {
